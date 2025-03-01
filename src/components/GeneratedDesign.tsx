@@ -22,15 +22,25 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
   const [isCopied, setIsCopied] = useState(false);
   
   const handleDownload = (type: 'mobile' | 'web') => {
-    // In a real app, this would be a proper download link
+    const imageUrl = type === 'mobile' ? designs.mobile : designs.web;
+    
+    // Create a temporary link and trigger download
+    const link = document.createElement('a');
+    link.href = imageUrl || '';
+    link.download = `${type}-design-${Date.now()}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
     toast.success(`${type === 'mobile' ? 'Mobile' : 'Web'} design downloaded`, {
       description: "Your design has been saved to your downloads folder.",
     });
   };
   
   const handleCopyCode = () => {
-    // In a real app, this would copy actual code to clipboard
-    navigator.clipboard.writeText(`// Generated code for ${activeTab} design based on: ${description}`);
+    // In a real implementation, this would generate actual code based on the design
+    // For now, we're just copying a placeholder
+    navigator.clipboard.writeText(`// Generated UI code for ${activeTab} design based on: "${description}"\n\n// This would contain the actual React/Tailwind code in a real implementation`);
     setIsCopied(true);
     toast.success("Code copied to clipboard");
     
@@ -42,26 +52,26 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
   return (
     <div className="space-y-6">
       <FadeIn>
-        <h3 className="text-2xl font-semibold mb-4 text-center">Your generated designs</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">Your AI-generated designs</h3>
       </FadeIn>
       
       <FadeIn delay={0.2}>
-        <Card className="shadow-lg border-border/50 overflow-hidden">
+        <Card className="shadow-lg border-purple-200 overflow-hidden">
           <Tabs 
             defaultValue={activeTab} 
             className="w-full"
             onValueChange={setActiveTab}
           >
-            <div className="flex justify-between items-center border-b border-border/50 p-4">
-              <TabsList className="grid grid-cols-2 w-fit bg-muted/30">
+            <div className="flex justify-between items-center border-b border-purple-200 p-4 bg-gradient-to-r from-indigo-50 to-purple-50">
+              <TabsList className="grid grid-cols-2 w-fit bg-white shadow-sm">
                 {designs.web && (
-                  <TabsTrigger value="web" disabled={!designs.web} className="flex items-center gap-2">
+                  <TabsTrigger value="web" disabled={!designs.web} className="flex items-center gap-2 data-[state=active]:bg-indigo-100 data-[state=active]:text-indigo-800">
                     <Monitor className="h-4 w-4" />
                     <span>Web</span>
                   </TabsTrigger>
                 )}
                 {designs.mobile && (
-                  <TabsTrigger value="mobile" disabled={!designs.mobile} className="flex items-center gap-2">
+                  <TabsTrigger value="mobile" disabled={!designs.mobile} className="flex items-center gap-2 data-[state=active]:bg-purple-100 data-[state=active]:text-purple-800">
                     <Smartphone className="h-4 w-4" />
                     <span>Mobile</span>
                   </TabsTrigger>
@@ -72,7 +82,7 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-purple-200 hover:bg-purple-50 text-purple-700"
                   onClick={() => handleDownload(activeTab as 'mobile' | 'web')}
                 >
                   <Download className="h-4 w-4" />
@@ -81,7 +91,7 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-indigo-200 hover:bg-indigo-50 text-indigo-700"
                   onClick={handleCopyCode}
                 >
                   {isCopied ? (
@@ -103,7 +113,7 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
               {designs.web && (
                 <TabsContent value="web" className="mt-0">
                   <div className="p-6 flex justify-center">
-                    <div className="relative w-full max-w-3xl rounded-lg overflow-hidden shadow-md">
+                    <div className="relative w-full max-w-3xl rounded-lg overflow-hidden shadow-md border border-purple-200">
                       <img 
                         src={designs.web} 
                         alt="Generated web design" 
@@ -111,7 +121,7 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                         style={{ aspectRatio: "16/9" }}
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
                         <div className="p-4 text-white">
                           <p className="text-sm">Based on: {description}</p>
                         </div>
@@ -132,7 +142,7 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                         style={{ aspectRatio: "9/16" }}
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
                         <div className="p-4 text-white">
                           <p className="text-sm">Based on: {description}</p>
                         </div>

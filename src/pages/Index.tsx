@@ -19,7 +19,7 @@ const Index = () => {
   
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-purple-100">
         <div className="animate-pulse-subtle">
           <div className="flex items-center gap-2">
             <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">
@@ -33,7 +33,7 @@ const Index = () => {
   }
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <Header />
       <main className="flex-1">
         <Hero />
