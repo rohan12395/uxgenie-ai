@@ -17,22 +17,44 @@ const DesignGenerator = () => {
   
   const generateDesignWithAI = async (prompt: string, designType: 'mobile' | 'web') => {
     try {
-      // In a real implementation, this would be an API call to a service like DALL-E, Midjourney, etc.
-      // For demo purposes, we're creating a realistic simulation with a delay
-      
-      // Here's where we'd make the actual API call in production
-      // const response = await fetch('https://api.openai.com/v1/images/generations', {...})
-      
       // Create specific prompts based on the platform type
       const designPrompt = designType === 'mobile' 
-        ? `Mobile app interface based on: ${prompt}. Show a realistic mobile app UI with clean design.`
-        : `Web app interface based on: ${prompt}. Show a realistic website UI with modern layout.`;
+        ? `Mobile UI design for a ${prompt} app. Clean modern interface, on a smartphone screen.`
+        : `Web interface design for ${prompt}. Modern, clean layout for desktop browser view.`;
       
       console.log(`Generating ${designType} design with prompt: ${designPrompt}`);
       
-      // Simulate API response with themed images based on common UI patterns
-      // In a production app, these would come from the AI service
-      const mockDesigns = {
+      // Use the Hugging Face Inference API with a public model
+      const response = await fetch(
+        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ 
+            inputs: designPrompt,
+            parameters: {
+              negative_prompt: "low quality, bad anatomy, blurry, pixelated",
+              num_inference_steps: 30,
+              guidance_scale: 7.5
+            }
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      // Get the image as a blob and convert to a data URL
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
+    } catch (error) {
+      console.error(`Error generating ${designType} design:`, error);
+      
+      // Fallback to placeholder images if the API fails
+      const fallbackImages = {
         mobile: {
           'dashboard': 'https://images.unsplash.com/photo-1604881988758-f76ad2f7aac1',
           'social': 'https://images.unsplash.com/photo-1621274147744-cfb5730c1560', 
@@ -47,23 +69,20 @@ const DesignGenerator = () => {
         }
       };
       
-      // Basic keyword matching to determine design type
-      let designCategory = 'default';
+      // Basic keyword matching for fallback
+      let category = 'default';
       const lowerPrompt = prompt.toLowerCase();
       
       if (lowerPrompt.includes('dashboard') || lowerPrompt.includes('analytics') || lowerPrompt.includes('admin')) {
-        designCategory = 'dashboard';
+        category = 'dashboard';
       } else if (lowerPrompt.includes('social') || lowerPrompt.includes('profile') || lowerPrompt.includes('feed')) {
-        designCategory = 'social';
+        category = 'social';
       } else if (lowerPrompt.includes('shop') || lowerPrompt.includes('product') || lowerPrompt.includes('ecommerce')) {
-        designCategory = 'ecommerce';
+        category = 'ecommerce';
       }
       
-      return mockDesigns[designType][designCategory];
-    } catch (error) {
-      console.error(`Error generating ${designType} design:`, error);
-      toast.error(`Failed to generate ${designType} design. Please try again.`);
-      return null;
+      toast.error(`Failed to generate ${designType} design. Using placeholder.`);
+      return fallbackImages[designType][category];
     }
   };
   

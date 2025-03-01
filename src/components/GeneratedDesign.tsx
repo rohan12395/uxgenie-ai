@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Monitor, Smartphone, Download, Copy, Check } from "lucide-react";
+import { Monitor, Smartphone, Download, Copy, Check, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FadeIn } from './ui-animations';
@@ -20,6 +20,10 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
     designs.web ? 'web' : 'mobile'
   );
   const [isCopied, setIsCopied] = useState(false);
+  const [isLoading, setIsLoading] = useState({
+    mobile: !!designs.mobile,
+    web: !!designs.web
+  });
   
   const handleDownload = (type: 'mobile' | 'web') => {
     const imageUrl = type === 'mobile' ? designs.mobile : designs.web;
@@ -48,11 +52,21 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
       setIsCopied(false);
     }, 2000);
   };
+
+  const handleImageLoad = (type: 'mobile' | 'web') => {
+    setIsLoading(prev => ({
+      ...prev,
+      [type]: false
+    }));
+  };
   
   return (
     <div className="space-y-6">
       <FadeIn>
-        <h3 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">Your AI-generated designs</h3>
+        <h3 className="text-2xl font-semibold mb-4 text-center bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+          <Sparkles className="inline h-5 w-5 mr-2 text-purple-500" />
+          Your AI-generated designs
+        </h3>
       </FadeIn>
       
       <FadeIn delay={0.2}>
@@ -114,12 +128,21 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                 <TabsContent value="web" className="mt-0">
                   <div className="p-6 flex justify-center">
                     <div className="relative w-full max-w-3xl rounded-lg overflow-hidden shadow-md border border-purple-200">
+                      {isLoading.web && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                            <p className="text-sm text-gray-600">Loading AI design...</p>
+                          </div>
+                        </div>
+                      )}
                       <img 
                         src={designs.web} 
                         alt="Generated web design" 
                         className="w-full h-auto object-cover"
                         style={{ aspectRatio: "16/9" }}
                         loading="lazy"
+                        onLoad={() => handleImageLoad('web')}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
                         <div className="p-4 text-white">
@@ -135,12 +158,21 @@ const GeneratedDesign = ({ designs, description }: GeneratedDesignProps) => {
                 <TabsContent value="mobile" className="mt-0">
                   <div className="p-6 flex justify-center">
                     <div className="relative max-w-[300px] rounded-3xl overflow-hidden shadow-md border-8 border-gray-800">
+                      {isLoading.mobile && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                            <p className="text-sm text-gray-600">Loading AI design...</p>
+                          </div>
+                        </div>
+                      )}
                       <img 
                         src={designs.mobile} 
                         alt="Generated mobile design" 
                         className="w-full h-auto object-cover"
                         style={{ aspectRatio: "9/16" }}
                         loading="lazy"
+                        onLoad={() => handleImageLoad('mobile')}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end">
                         <div className="p-4 text-white">
