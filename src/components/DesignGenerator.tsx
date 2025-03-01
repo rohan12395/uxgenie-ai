@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Camera, Leaf } from "lucide-react";
 import PlatformSelector, { Platform } from './PlatformSelector';
 import GeneratedDesign from './GeneratedDesign';
 import { FadeIn } from './ui-animations';
@@ -21,15 +21,15 @@ const DesignGenerator = () => {
     
     // Simulate API call delay
     setTimeout(() => {
-      // Mock design generation - in a real app, this would be an API call
+      // Plant recognition app specific mockups
       const mockDesigns: { mobile?: string; web?: string } = {};
       
       if (platform === 'mobile' || platform === 'both') {
-        mockDesigns.mobile = 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158';
+        mockDesigns.mobile = 'https://images.unsplash.com/photo-1523712999610-f77fbcfc3843';
       }
       
       if (platform === 'web' || platform === 'both') {
-        mockDesigns.web = 'https://images.unsplash.com/photo-1498050108023-c5249f4df085';
+        mockDesigns.web = 'https://images.unsplash.com/photo-1518495973542-4542c06a5843';
       }
       
       setGeneratedDesigns(mockDesigns);
@@ -47,16 +47,16 @@ const DesignGenerator = () => {
             <Card className="border-border/50 shadow-lg overflow-hidden">
               <CardHeader className="bg-muted/30 border-b border-border/50">
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Design Generator
+                  <Leaf className="h-5 w-5 text-green-600" />
+                  Plant Recognition Design Generator
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <label className="text-sm font-medium">Describe your design</label>
+                    <label className="text-sm font-medium">Describe your plant app design</label>
                     <Textarea
-                      placeholder="Describe the UI you want to generate (e.g., 'A modern e-commerce product page with shopping cart and checkout button')"
+                      placeholder="Describe the plant recognition UI you want to generate (e.g., 'A modern app for identifying plants with a camera button and plant info display')"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       className="min-h-[120px] resize-none focus-ring"
@@ -75,17 +75,17 @@ const DesignGenerator = () => {
                     <Button
                       onClick={handleGenerate}
                       disabled={!description.trim() || isGenerating}
-                      className="w-full btn-shine"
+                      className="w-full btn-shine bg-green-600 hover:bg-green-700"
                     >
                       {isGenerating ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating designs...
+                          Generating plant app designs...
                         </>
                       ) : (
                         <>
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Generate designs
+                          <Camera className="mr-2 h-4 w-4" />
+                          Generate plant recognition UI
                         </>
                       )}
                     </Button>
